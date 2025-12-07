@@ -1,6 +1,21 @@
+"use client";
+
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import { supabase } from "../lib/supabase";
 
 export default function Home() {
+  const [data, setData] = useState<any[]>([]);
+
+    useEffect(() => {
+    async function load() {
+      const { data } = await supabase.from("todos").select("*");
+      setData(data || []);
+    }
+
+     load();
+  }, []);
+  
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
       <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
@@ -58,6 +73,9 @@ export default function Home() {
           >
             Documentation
           </a>
+        </div>
+        <div className="bg-red-500 text-white p-4 rounded-xl">
+          Tailwind v4 is working!
         </div>
       </main>
     </div>
