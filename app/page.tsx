@@ -2,18 +2,18 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { supabase } from "../lib/supabase";
+import { createClient } from "../lib/client";
 
 export default function Home() {
+  const supabase = createClient(); 
   const [data, setData] = useState<any[]>([]);
 
-    useEffect(() => {
+  useEffect(() => {
     async function load() {
       const { data } = await supabase.from("todos").select("*");
       setData(data || []);
     }
-
-     load();
+    load();
   }, []);
   
   return (
