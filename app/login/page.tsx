@@ -1,42 +1,59 @@
-import Image from "next/image";
+'use client' // <--- Add this at the very top
+
 import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { login } from "./actions"; // Import the server action we just made
 
 export default function LoginPage() {
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    const formData = new FormData(event.currentTarget);
+    
+    // Call the server action
+    const result = await login(formData);
+
+    if (result?.error) {
+      setError(result.error);
+      setLoading(false);
+    } else {
+      // Redirect handled by server action, but just in case:
+      // router.push('/'); 
+    }
+  };
+
   return (
-    // Note: bg-[var(--background)] already handles the main dark background color 
-    // based on your globals.css
     <div className="min-h-screen flex w-full bg-[var(--background)] transition-colors duration-300">
       
-      {/* LEFT SIDE: Illustration (Hidden on mobile) - Kept the light background for contrast with the illustration */}
-      <div className="hidden lg:flex w-1/2 bg-blue-50 items-center justify-center relative overflow-hidden">
-        <div className="relative w-[80%] h-[80%]">
-             {/* Replace with your actual image path */}
-             <img 
-               src="/left.png" 
-               alt="VSCAN Scanning Illustration" 
-               className="object-contain w-full h-full z-10 relative"
-             />
-        </div>
-        
-        {/* Decorative background blur effects */}
+      {/* LEFT SIDE: Illustration */}
+      <div className="hidden lg:flex w-1/2 bg-blue-50 items-center justify-center relative overflow-hidden p-4">
+           <img 
+             src="/left.png" 
+             alt="VSCAN Scanning Illustration" 
+             className="object-contain w-full h-full z-10 relative"
+           />
         <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
         <div className="absolute top-20 -right-20 w-96 h-96 bg-cyan-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
       </div>
 
       {/* RIGHT SIDE: Form Section */}
-      {/* Added dark:text-gray-200 to base text color */}
       <div className="w-full lg:w-1/2 flex flex-col justify-center p-8 md:p-12 lg:px-24 text-gray-900 dark:text-gray-200">
         
         {/* Logo Area */}
         <div className="flex justify-end mb-10 lg:absolute lg:top-8 lg:right-12">
-          {/* Added dark:text-white for the logo text */}
           <div className="flex items-center gap-2 font-bold text-xl tracking-wider text-gray-900 dark:text-white transition-colors">
-            {/* Simple CSS Grid Icon - Inverted colors for dark mode */}
             <div className="grid grid-cols-2 gap-0.5 w-6 h-6">
-               <div className="bg-gray-900 dark:bg-gray-100 rounded-sm transition-colors"></div>
-               <div className="border-2 border-gray-900 dark:border-gray-100 rounded-sm transition-colors"></div>
-               <div className="bg-gray-900 dark:bg-gray-100 rounded-sm opacity-50 transition-colors"></div>
-               <div className="bg-gray-900 dark:bg-gray-100 rounded-sm transition-colors"></div>
+               <div className="bg-gray-900 dark:bg-gray-100 rounded-sm"></div>
+               <div className="border-2 border-gray-900 dark:border-gray-100 rounded-sm"></div>
+               <div className="bg-gray-900 dark:bg-gray-100 rounded-sm opacity-50"></div>
+               <div className="bg-gray-900 dark:bg-gray-100 rounded-sm"></div>
             </div>
             VSCAN
           </div>
@@ -46,31 +63,31 @@ export default function LoginPage() {
         <div className="w-full max-w-md mx-auto">
           
           <div className="mb-8">
-            {/* Heading: dark:text-white */}
             <h1 className="text-3xl font-bold mb-2 text-gray-900 dark:text-white transition-colors">Welcome</h1>
-            {/* Subtitle: Lighter gray in dark mode for contrast */}
             <p className="text-gray-500 dark:text-gray-400 text-sm transition-colors">
-              EHE
+              Login para mahmo nakang demon hunter!
             </p>
           </div>
 
-          <form className="space-y-6">
+          {/* ERROR ALERT */}
+          {error && (
+            <div className="mb-4 p-3 rounded-lg bg-red-100 border border-red-200 text-red-700 text-sm">
+              {error}
+            </div>
+          )}
+
+          <form className="space-y-6" onSubmit={handleSubmit}>
             
             {/* Email Input */}
             <div>
-              {/* Label: Lighter gray in dark mode */}
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 transition-colors">
                 Email
               </label>
-              {/* INPUT STYLING CHANGES:
-                  - bg-white -> dark:bg-gray-800 (Dark background)
-                  - border-gray-300 -> dark:border-gray-700 (Darker border)
-                  - text-gray-900 -> dark:text-white (Light text)
-                  - Added dark:placeholder-gray-500 for better placeholder contrast
-              */}
               <input
                 type="email"
                 id="email"
+                name="email" // <--- IMPORTANT: This connects to FormData
+                required
                 placeholder="name@example.com"
                 className="w-full px-4 py-3 rounded-lg 
                            bg-white border border-gray-300 text-gray-900 
@@ -88,6 +105,8 @@ export default function LoginPage() {
               <input
                 type="password"
                 id="password"
+                name="password" // <--- IMPORTANT: This connects to FormData
+                required
                 placeholder="••••••••"
                 className="w-full px-4 py-3 rounded-lg 
                            bg-white border border-gray-300 text-gray-900 
@@ -97,7 +116,7 @@ export default function LoginPage() {
               />
             </div>
 
-            {/* Remember Me & Forgot Password */}
+            {/* Remember Me */}
             <div className="flex items-center justify-between text-sm">
               <label className="flex items-center text-gray-600 dark:text-gray-400 cursor-pointer transition-colors">
                 <input 
@@ -111,18 +130,18 @@ export default function LoginPage() {
               </a>
             </div>
 
-            {/* Login Button - Gradient remains the same as it pops nicely in both modes */}
+            {/* Login Button */}
             <button
               type="submit"
-              className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-cyan-400 hover:opacity-90 text-white font-bold rounded-lg shadow-lg transform active:scale-[0.99] transition-all"
+              disabled={loading}
+              className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-cyan-400 hover:opacity-90 text-white font-bold rounded-lg shadow-lg transform active:scale-[0.99] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Log In
+              {loading ? "Logging in..." : "Log In"}
             </button>
           </form>
 
           {/* Divider */}
           <div className="relative flex py-6 items-center">
-            {/* Divider lines get darker */}
             <div className="flex-grow border-t border-gray-300 dark:border-gray-700 transition-colors"></div>
             <span className="flex-shrink-0 mx-4 text-gray-400 dark:text-gray-500 text-sm transition-colors">Or</span>
             <div className="flex-grow border-t border-gray-300 dark:border-gray-700 transition-colors"></div>
@@ -131,12 +150,10 @@ export default function LoginPage() {
           {/* Google Button */}
           <button
             type="button"
-            // Changed background, border, and text for dark mode
             className="w-full py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors font-medium
                        bg-gray-100 hover:bg-gray-200 border border-gray-200 text-gray-700
                        dark:bg-gray-800 dark:hover:bg-gray-700 dark:border-gray-700 dark:text-gray-200"
           >
-            {/* Google SVG Icon (Colors remain default as they are brand colors) */}
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
               <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
@@ -146,7 +163,6 @@ export default function LoginPage() {
             Google
           </button>
 
-          {/* Footer Link */}
           <div className="mt-8 text-center text-sm text-gray-600 dark:text-gray-400 transition-colors">
             Don't have an account?{' '}
             <Link href="/signup" className="text-cyan-600 dark:text-cyan-500 font-semibold hover:underline">
