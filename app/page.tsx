@@ -1,25 +1,26 @@
-"use client";
+import { createClient } from "@/lib/server";
+import { redirect } from "next/navigation";
+import Dashboard from "@/components/Dashboard";
 
-import Image from "next/image";
-import { useEffect, useState } from "react";
-import { createClient } from "../lib/client";
-import LoginPage  from "./login/page";
+export default async function Home() {
+  const supabase = await createClient();
 
-export default function Home() {
-  const supabase = createClient(); 
-  const [data, setData] = useState<any[]>([]);
+  // 1. Check if user is logged in
+  const { data: { user } } = await supabase.auth.getUser();
 
-  useEffect(() => {
-    async function load() {
-      const { data } = await supabase.from("todos").select("*");
-      setData(data || []);
-    }
-    load();
-  }, []);
-  
+  if (!user) {
+    redirect("/login");
+  }
+
+  // 2. Fetch user profile data
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', user.id)
+    .single();
+
+  // 3. Render Dashboard with data
   return (
-    <>
-      < LoginPage />
-    </>
+    <Dashboard profile={profile} />
   );
 }
