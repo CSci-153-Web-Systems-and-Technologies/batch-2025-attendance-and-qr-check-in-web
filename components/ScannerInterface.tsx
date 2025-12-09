@@ -17,11 +17,14 @@ import {
   X, 
   Scan, 
   Users, 
-  Copy 
+  Copy,
+  LogOut,
+  LogIn
 } from 'lucide-react';
 
 type Event = { id: string; title: string };
-type ScannedUser = { full_name: string; email: string; role: string; id: string };
+// Updated type to include the status from the server response
+type ScannedUser = { full_name: string; email: string; role: string; id: string; status?: 'checked-in' | 'checked-out' };
 
 export default function ScannerInterface({ events }: { events: Event[] }) {
   const [selectedEventId, setSelectedEventId] = useState<string>(events[0]?.id || "");
@@ -40,12 +43,18 @@ export default function ScannerInterface({ events }: { events: Event[] }) {
       const result = detectedCodes[0].rawValue;
       setScanStatus('idle'); 
 
+      // Calls the updated server action we created
       const response = await logAttendance(result, selectedEventId);
 
       if (response.success) {
         setScanStatus('success');
-        toast.success(`Verified: ${response.user.full_name}`);
-        setLastScannedUser(response.user);
+        
+        // 1. Show the dynamic message (Check-in vs Check-out)
+        toast.success(`${response.message} - ${response.user.full_name}`);
+        
+        // 2. Save the user AND their new status to state
+        setLastScannedUser({ ...response.user, status: response.status });
+        
         setStats(prev => ({ ...prev, total: prev.total + 1, success: prev.success + 1 }));
       } else {
         setScanStatus('error');
@@ -213,7 +222,11 @@ export default function ScannerInterface({ events }: { events: Event[] }) {
                           ${scanStatus === 'success' ? 'bg-white text-green-700' : 'bg-red-100 text-red-700'}
                       `}>
                           {scanStatus === 'success' ? (
-                              <><CheckCircle2 className="w-4 h-4" /> VERIFIED ATTENDEE</>
+                              lastScannedUser.status === 'checked-out' ? (
+                                <><LogOut className="w-4 h-4" /> CHECKED-OUT</>
+                              ) : (
+                                <><LogIn className="w-4 h-4" /> CHECKED-IN</>
+                              )
                           ) : (
                               <><AlertCircle className="w-4 h-4" /> SCAN ERROR</>
                           )}
