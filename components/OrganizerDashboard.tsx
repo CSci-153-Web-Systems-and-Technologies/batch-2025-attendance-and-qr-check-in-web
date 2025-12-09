@@ -1,18 +1,20 @@
 'use client'
 
+import { useState } from "react"; 
+import { toast } from "sonner"; 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import CreateEventModal from "./CreateEventModal";
-// REMOVED: SignOutButton import (it's inside the sidebar now)
 import { Button } from "@/components/ui/button";
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
   PieChart, Pie, Cell 
 } from 'recharts';
 import { 
-  Users, QrCode, CalendarDays, TrendingUp, FileDown, Activity, Bell
+  Users, QrCode, CalendarDays, TrendingUp, FileDown, Activity, Bell, Loader2
 } from "lucide-react";
-import OrganizerSidebar from "./OrganizerSidebar"; // <--- 1. Import the new Sidebar
+import OrganizerSidebar from "./OrganizerSidebar"; 
+import { exportAttendanceData } from "@/app/actions/export"; 
 
 // --- TYPES ---
 export type DashboardStats = {
@@ -32,7 +34,33 @@ type UserProfile = {
 }
 
 export default function OrganizerDashboard({ profile, stats }: { profile: UserProfile, stats: DashboardStats }) {
-  
+  const [exporting, setExporting] = useState(false);
+
+  const handleExport = async () => {
+    setExporting(true);
+    toast.info("Preparing export...");
+
+    const result = await exportAttendanceData();
+
+    if (result.success && result.csv) {
+      // Create a blob and trigger download
+      const blob = new Blob([result.csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `vscan-export-${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      toast.success("Export downloaded successfully!");
+    } else {
+      toast.error(result.error || "Failed to export data");
+    }
+    setExporting(false);
+  };
+
   return (
     <div className="flex min-h-screen bg-gray-50 dark:bg-[#0a0a0a] transition-colors duration-300 relative overflow-hidden">
       
@@ -42,13 +70,10 @@ export default function OrganizerDashboard({ profile, stats }: { profile: UserPr
         <div className="absolute bottom-[10%] left-[-10%] w-[400px] h-[400px] bg-cyan-500/10 rounded-full blur-[100px]" />
       </div>
 
-      {/* 2. REPLACE THE OLD <aside> WITH THIS: */}
       <OrganizerSidebar profile={profile} />
 
-      {/* MAIN CONTENT - Ensure margin is lg:ml-72 */}
+      {/* MAIN CONTENT */}
       <main className="flex-1 lg:ml-72 p-6 lg:p-10 space-y-10 relative z-10">
-        
-        {/* ... The rest of your dashboard content stays exactly the same ... */}
         
         {/* Header */}
         <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
@@ -57,8 +82,18 @@ export default function OrganizerDashboard({ profile, stats }: { profile: UserPr
                 <p className="text-gray-500 dark:text-gray-400 mt-1 font-medium">Real-time overview & analytics.</p>
             </div>
             <div className="flex items-center gap-3">
-                <Button variant="outline" className="gap-2 h-11 hidden sm:flex bg-white/50 dark:bg-black/50 border-gray-200 dark:border-gray-800 backdrop-blur-sm hover:bg-white dark:hover:bg-black transition-all">
-                    <FileDown className="w-4 h-4" /> Export
+                <Button 
+                    variant="outline" 
+                    onClick={handleExport}
+                    disabled={exporting}
+                    className="gap-2 h-11 hidden sm:flex bg-white/50 dark:bg-black/50 border-gray-200 dark:border-gray-800 backdrop-blur-sm hover:bg-white dark:hover:bg-black transition-all"
+                >
+                    {exporting ? (
+                        <Loader2 className="w-4 h-4 animate-spin" /> 
+                    ) : (
+                        <FileDown className="w-4 h-4" /> 
+                    )}
+                    {exporting ? "Exporting..." : "Export"}
                 </Button>
                 <CreateEventModal />
             </div>
@@ -66,7 +101,6 @@ export default function OrganizerDashboard({ profile, stats }: { profile: UserPr
 
         {/* 1. STATS ROW */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* ... Stats cards content ... */}
             <Card className="border-0 shadow-lg shadow-purple-500/5 bg-gradient-to-br from-white to-purple-50/50 dark:from-[#151515] dark:to-purple-900/10 overflow-hidden relative group">
                 <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity transform group-hover:scale-110 duration-500">
                     <Users className="w-24 h-24 text-purple-600" />
@@ -80,7 +114,6 @@ export default function OrganizerDashboard({ profile, stats }: { profile: UserPr
                 </CardContent>
             </Card>
             
-            {/* Copy the rest of your stats cards here from your previous file... */}
             <Card className="border-0 shadow-lg shadow-cyan-500/5 bg-gradient-to-br from-white to-cyan-50/50 dark:from-[#151515] dark:to-cyan-900/10 overflow-hidden relative group">
                 <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity transform group-hover:scale-110 duration-500">
                     <TrendingUp className="w-24 h-24 text-cyan-600" />
