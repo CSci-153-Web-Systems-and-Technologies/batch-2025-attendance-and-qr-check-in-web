@@ -1,11 +1,13 @@
 'use client'
 
 import Link from "next/link";
+import { usePathname } from "next/navigation"; // <--- 1. Import this
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { CalendarDays, QrCode, Users, Menu } from "lucide-react";
 import SignOutButton from "./SignOutButton";
 import { useState } from "react";
+import { cn } from "@/lib/utils"; // Helper to merge classes comfortably
 
 type UserProfile = {
   full_name: string;
@@ -15,8 +17,21 @@ type UserProfile = {
 
 export default function OrganizerSidebar({ profile }: { profile: UserProfile }) {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname(); // <--- 2. Get current route
 
-  // We extract the content into a reusable variable so we don't write it twice
+  // Helper to check if a link is active
+  const isActive = (path: string) => pathname === path;
+
+  // Reusable styling for the navigation buttons
+  const getButtonClass = (active: boolean) => {
+    return cn(
+      "w-full justify-start h-12 gap-4 transition-all",
+      active 
+        ? "bg-gradient-to-r from-purple-50 to-white dark:from-purple-900/20 dark:to-transparent border border-purple-100 dark:border-purple-900/30 text-purple-700 dark:text-purple-300 font-semibold shadow-sm" 
+        : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100/50 dark:hover:bg-gray-800/50"
+    );
+  };
+
   const SidebarContent = (
     <div className="flex flex-col h-full">
         {/* Logo Area */}
@@ -34,24 +49,39 @@ export default function OrganizerSidebar({ profile }: { profile: UserProfile }) 
 
         {/* Navigation */}
         <nav className="flex-1 px-6 space-y-3 mt-4">
+          
+          {/* DASHBOARD LINK */}
           <Link href="/" className="w-full" onClick={() => setOpen(false)}>
-            <Button variant="ghost" className="w-full justify-start h-12 gap-4 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100/50 dark:hover:bg-gray-800/50 transition-all">
-                <CalendarDays className="w-5 h-5" />
+            <Button 
+                variant={isActive('/') ? "secondary" : "ghost"} 
+                className={getButtonClass(isActive('/'))}
+            >
+                <CalendarDays className={cn("w-5 h-5", isActive('/') ? "text-purple-600 dark:text-purple-400" : "")} />
                 Dashboard
             </Button>
           </Link>
           
+          {/* MANAGE EVENTS LINK */}
           <Link href="/events" className="w-full" onClick={() => setOpen(false)}>
-            <Button variant="ghost" className="w-full justify-start h-12 gap-4 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100/50 dark:hover:bg-gray-800/50 transition-all">
-                <QrCode className="w-5 h-5" />
+            <Button 
+                variant={isActive('/events') ? "secondary" : "ghost"} 
+                className={getButtonClass(isActive('/events'))}
+            >
+                <QrCode className={cn("w-5 h-5", isActive('/events') ? "text-purple-600 dark:text-purple-400" : "")} />
                 Manage Events
             </Button>
           </Link>
 
-          <Button variant="ghost" className="w-full justify-start h-12 gap-4 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100/50 dark:hover:bg-gray-800/50 transition-all">
-            <Users className="w-5 h-5" />
-            Attendees
-          </Button>
+          {/* ATTENDEES LINK (Placeholder) */}
+          <Link href="/attendees" className="w-full" onClick={() => setOpen(false)}>
+            <Button 
+                variant={isActive('/attendees') ? "secondary" : "ghost"} 
+                className={getButtonClass(isActive('/attendees'))}
+            >
+                <Users className={cn("w-5 h-5", isActive('/attendees') ? "text-purple-600 dark:text-purple-400" : "")} />
+                Attendees
+            </Button>
+          </Link>
         </nav>
 
         {/* User Profile */}
@@ -63,7 +93,7 @@ export default function OrganizerSidebar({ profile }: { profile: UserProfile }) 
 
   return (
     <>
-      {/* --- MOBILE TRIGGER (Visible only on small screens) --- */}
+      {/* MOBILE TRIGGER */}
       <div className="lg:hidden fixed top-4 left-4 z-50">
         <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
@@ -72,14 +102,13 @@ export default function OrganizerSidebar({ profile }: { profile: UserProfile }) 
                 </Button>
             </SheetTrigger>
             <SheetContent side="left" className="p-0 w-72 bg-white/95 dark:bg-[#111]/95 backdrop-blur-xl border-r border-gray-200 dark:border-gray-800">
-                {/* Hidden Title for Accessibility */}
                 <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
                 {SidebarContent}
             </SheetContent>
         </Sheet>
       </div>
 
-      {/* --- DESKTOP SIDEBAR (Visible only on Large screens) --- */}
+      {/* DESKTOP SIDEBAR */}
       <aside className="hidden lg:flex flex-col w-72 bg-white/80 dark:bg-[#111]/80 backdrop-blur-xl border-r border-gray-200/50 dark:border-gray-800/50 h-screen fixed top-0 left-0 z-30">
         {SidebarContent}
       </aside>
