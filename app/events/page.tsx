@@ -5,7 +5,7 @@ import EventsList from "@/components/EventsList";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import CreateEventModal from "@/components/CreateEventModal";
-import OrganizerSidebar from "@/components/OrganizerSidebar"; // <--- Import the new Sidebar
+import OrganizerSidebar from "@/components/OrganizerSidebar"; 
 
 export default async function EventsPage() {
   const supabase = await createClient();
@@ -22,6 +22,7 @@ export default async function EventsPage() {
     .single();
 
   // 3. Fetch Events
+  // Select '*' ensures we get description & cover_image_url for the Edit modal
   const { data: events } = await supabase
     .from('events')
     .select('*')
@@ -31,10 +32,10 @@ export default async function EventsPage() {
   return (
     <div className="flex min-h-screen bg-gray-50 dark:bg-[#0a0a0a] transition-colors duration-300">
       
-      {/* 4. Add the Sidebar here */}
+      {/* 4. Sidebar */}
       <OrganizerSidebar profile={profile} />
 
-      {/* Main Content Area - Added lg:ml-72 to push it right of the sidebar */}
+      {/* Main Content Area */}
       <div className="flex-1 lg:ml-72 relative overflow-hidden">
         
         {/* Background Decor */}

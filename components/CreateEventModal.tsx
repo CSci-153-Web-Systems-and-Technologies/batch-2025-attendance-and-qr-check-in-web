@@ -61,13 +61,10 @@ export default function CreateEventModal() {
         </Button>
       </DialogTrigger>
       
-      {/* LAYOUT FIX: 
-          - max-h-[85vh]: Prevents modal from being taller than the screen
-          - flex flex-col: Allows us to split header, body, and footer
-      */}
+      {/* IMPROVED LAYOUT & DESIGN */}
       <DialogContent className="sm:max-w-[500px] max-h-[85vh] flex flex-col p-0 border-0 shadow-2xl rounded-2xl bg-white dark:bg-[#0a0a0a]">
         
-        {/* 1. FIXED HEADER */}
+        {/* 1. GRADIENT HEADER */}
         <div className="bg-gradient-to-r from-purple-50 to-white dark:from-purple-900/20 dark:to-[#0a0a0a] p-6 border-b border-gray-100 dark:border-gray-800 shrink-0">
             <DialogHeader>
                 <DialogTitle className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
@@ -82,9 +79,9 @@ export default function CreateEventModal() {
         
         {/* 2. SCROLLABLE FORM BODY */}
         <div className="flex-1 overflow-y-auto p-6">
-            <form id="create-event-form" onSubmit={handleSubmit} className="space-y-5">
+            <form id="create-event-form" onSubmit={handleSubmit} className="space-y-6">
             
-                {/* IMAGE UPLOAD BANNER */}
+                {/* INTERACTIVE IMAGE UPLOAD */}
                 <div className="space-y-2">
                     <Label className="text-xs font-bold uppercase tracking-wide text-gray-500">Event Cover</Label>
                     <div 
@@ -131,7 +128,7 @@ export default function CreateEventModal() {
                     </div>
                 </div>
 
-                {/* EVENT DETAILS */}
+                {/* FORM FIELDS */}
                 <div className="space-y-4">
                     <div className="space-y-2">
                         <Label className="text-xs font-bold uppercase tracking-wide text-gray-500">Event Name</Label>
@@ -189,28 +186,28 @@ export default function CreateEventModal() {
                         <Textarea 
                             name="description" 
                             placeholder="What is this event about?" 
-                            className="resize-none h-20 bg-white dark:bg-black/20 border-gray-200 dark:border-gray-800 focus:border-purple-500" 
+                            className="resize-none h-24 bg-white dark:bg-black/20 border-gray-200 dark:border-gray-800 focus:border-purple-500" 
                         />
                     </div>
                 </div>
             </form>
         </div>
 
-        {/* 3. FIXED FOOTER */}
+        {/* 3. POLISHED FOOTER */}
         <div className="p-6 pt-4 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-[#0a0a0a] shrink-0 flex items-center justify-end gap-3 rounded-b-2xl">
             <Button 
                 type="button" 
                 variant="ghost" 
                 onClick={() => setOpen(false)}
-                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/5"
             >
                 Cancel
             </Button>
             <Button 
-                form="create-event-form" // Connects to the form ID above
+                form="create-event-form" 
                 type="submit" 
                 disabled={loading} 
-                className="bg-purple-600 hover:bg-purple-700 text-white px-6 shadow-lg shadow-purple-500/20"
+                className="bg-purple-600 hover:bg-purple-700 text-white px-6 shadow-lg shadow-purple-500/20 transition-all active:scale-95"
             >
                 {loading ? (
                     <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Creating...</>
