@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/client'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import Link from 'next/link'
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -14,7 +15,6 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { LogOut, Settings, User, ChevronsUpDown } from "lucide-react"
 
-// Define the shape of the profile prop
 type UserProfile = {
   full_name: string;
   email: string;
@@ -41,17 +41,18 @@ export default function SignOutButton({ profile }: { profile: UserProfile }) {
 
   return (
     <DropdownMenu>
-      {/* THE TRIGGER: This replaces your old "Mini Profile" section */}
       <DropdownMenuTrigger asChild>
-        <button className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-left group outline-none">
-            {/* User Avatar */}
+        {/* ADD suppressHydrationWarning HERE */}
+        <button 
+            suppressHydrationWarning
+            className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-left group outline-none"
+        >
             <Avatar className="h-9 w-9 border border-gray-200 dark:border-gray-700">
                 <AvatarFallback className="bg-gradient-to-tr from-blue-500 to-cyan-400 text-white font-bold text-xs">
                     {profile.full_name.charAt(0)}
                 </AvatarFallback>
             </Avatar>
             
-            {/* User Info */}
             <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 dark:text-white truncate group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
                     {profile.full_name}
@@ -61,12 +62,10 @@ export default function SignOutButton({ profile }: { profile: UserProfile }) {
                 </p>
             </div>
 
-            {/* Icon indicating it's a menu */}
             <ChevronsUpDown className="w-4 h-4 text-gray-400" />
         </button>
       </DropdownMenuTrigger>
 
-      {/* THE MENU CONTENT: Appears ABOVE the button (side="top") */}
       <DropdownMenuContent side="top" align="start" className="w-56 mb-2">
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
@@ -76,14 +75,18 @@ export default function SignOutButton({ profile }: { profile: UserProfile }) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         
-        <DropdownMenuItem className="cursor-pointer gap-2">
-            <User className="w-4 h-4 text-gray-500" />
-            <span>Profile</span>
+        <DropdownMenuItem asChild>
+            <Link href="/settings" className="cursor-pointer gap-2 flex items-center">
+                <User className="w-4 h-4 text-gray-500" />
+                <span>Profile</span>
+            </Link>
         </DropdownMenuItem>
         
-        <DropdownMenuItem className="cursor-pointer gap-2">
-            <Settings className="w-4 h-4 text-gray-500" />
-            <span>Settings</span>
+        <DropdownMenuItem asChild>
+            <Link href="/settings" className="cursor-pointer gap-2 flex items-center">
+                <Settings className="w-4 h-4 text-gray-500" />
+                <span>Settings</span>
+            </Link>
         </DropdownMenuItem>
         
         <DropdownMenuSeparator />

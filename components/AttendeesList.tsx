@@ -11,7 +11,6 @@ import { Search, MapPin, ArrowRight, Clock, CalendarDays, FilterX, LogIn, LogOut
 import { Button } from "@/components/ui/button"
 import ManualCheckInModal from "./ManualCheckInModal"
 
-// Type Definition matching your new DB schema
 type AttendeeRecord = {
   id: string
   check_in_time: string        
@@ -29,7 +28,6 @@ type AttendeeRecord = {
   } | null
 }
 
-// 1. UPDATE: Accept 'events' prop here
 export default function AttendeesList({ 
   initialData, 
   events 
@@ -41,12 +39,9 @@ export default function AttendeesList({
   const [statusFilter, setStatusFilter] = useState("all")
   const [eventFilter, setEventFilter] = useState("all")
 
-  // Use the passed 'events' prop for the dropdown, or derive unique ones if preferred.
-  // Using the passed prop ensures we see ALL events, even those with 0 attendees.
   const filterOptions = useMemo(() => {
     if (events && events.length > 0) return events;
     
-    // Fallback to deriving from data if prop is empty (safety check)
     const eventsMap = new Map();
     initialData.forEach(item => {
       if (item.events) {
@@ -56,28 +51,23 @@ export default function AttendeesList({
     return Array.from(eventsMap.entries()).map(([id, title]) => ({ id, title }));
   }, [initialData, events]);
 
-  // 2. Filter Logic
   const filteredAttendees = initialData.filter(record => {
-    // Search
     const searchLower = searchTerm.toLowerCase()
     const nameMatch = record.profiles?.full_name.toLowerCase().includes(searchLower)
     const emailMatch = record.profiles?.email.toLowerCase().includes(searchLower)
     
-    // Filters
     const matchesStatus = statusFilter === "all" ? true : record.status === statusFilter
     const matchesEvent = eventFilter === "all" ? true : record.events?.id === eventFilter
 
     return (nameMatch || emailMatch) && matchesStatus && matchesEvent
   })
 
-  // 3. Clear Filters Helper
   const clearFilters = () => {
     setSearchTerm("")
     setStatusFilter("all")
     setEventFilter("all")
   }
 
-  // 4. Formatting Helpers
   const formatTime = (dateString: string | null) => {
     if (!dateString) return <span className="text-gray-300 dark:text-gray-700 text-xs">--:--</span>;
     return new Date(dateString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -106,7 +96,6 @@ export default function AttendeesList({
         
         <div className="flex flex-col sm:flex-row gap-2">
             
-            {/* 2. UPDATE: Add Manual Check-in Button Here */}
             <ManualCheckInModal events={events} />
 
             {/* Event Filter */}
@@ -188,7 +177,6 @@ export default function AttendeesList({
               filteredAttendees.map((record) => (
                 <TableRow key={record.id} className="group border-b border-gray-50 dark:border-gray-800/50 hover:bg-purple-50/30 dark:hover:bg-purple-900/10 transition-colors">
                   
-                  {/* PARTICIPANT (Styled like your image_4fb4db.png) */}
                   <TableCell className="pl-8 py-4">
                     <div className="flex items-center gap-4">
                       <Avatar className="h-12 w-12 border-2 border-white dark:border-gray-800 shadow-sm ring-2 ring-transparent group-hover:ring-purple-100 dark:group-hover:ring-purple-900 transition-all">
