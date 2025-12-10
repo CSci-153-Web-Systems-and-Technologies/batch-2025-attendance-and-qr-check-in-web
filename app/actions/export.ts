@@ -2,7 +2,6 @@
 
 import { createClient } from '@/lib/server'
 
-// 1. Define the shape of the data manually to fix the TypeScript error
 type AttendanceExport = {
   check_in_time: string | null
   check_out_time: string | null
@@ -10,20 +9,18 @@ type AttendanceExport = {
   profiles: {
     full_name: string | null
     email: string | null
-  } | null // <--- We explicitly say this is an Object, not an Array
+  } | null
   events: {
     title: string | null
-  } | null // <--- We explicitly say this is an Object, not an Array
+  } | null
 }
 
 export async function exportAttendanceData() {
   const supabase = await createClient()
 
-  // Authenticate
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: "Unauthorized" }
 
-  // Fetch events
   const { data: events } = await supabase
     .from('events')
     .select('id')
@@ -35,7 +32,6 @@ export async function exportAttendanceData() {
     return { error: "No events found to export." }
   }
 
-  // 2. Fetch Data
   const { data } = await supabase
     .from('attendance')
     .select(`
@@ -52,11 +48,8 @@ export async function exportAttendanceData() {
     return { error: "No attendance data found." }
   }
 
-  // 3. CAST THE DATA to our new type
-  // This forces TypeScript to treat events/profiles as objects
   const attendance = data as unknown as AttendanceExport[]
 
-  // 4. Convert to CSV
   const headers = ['Event Name', 'Participant Name', 'Email', 'Check In Time', 'Check Out Time', 'Status']
   const csvRows = [headers.join(',')]
 

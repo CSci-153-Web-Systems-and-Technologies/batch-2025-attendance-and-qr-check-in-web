@@ -68,7 +68,6 @@ export default async function AttendeesPage() {
 
             {/* List Component with Events Prop */}
             <div className="flex flex-col gap-6">
-                {/* Add the Modal Here, passing the events prop */}
                 <div className="flex justify-end">
                     <AddAttendeeModal events={events || []} />
                 </div>

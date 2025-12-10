@@ -7,7 +7,7 @@ export async function searchUsersForEvent(query: string, eventId: string) {
 
   if (!query || query.length < 2) return { users: [] }
 
-  // 1. Search Profiles (Name or Email)
+
   const { data: profiles, error } = await supabase
     .from('profiles')
     .select('id, full_name, email, avatar_url, role')
@@ -16,8 +16,6 @@ export async function searchUsersForEvent(query: string, eventId: string) {
 
   if (error || !profiles) return { users: [] }
 
-  // 2. For each profile, check their status for THIS event
-  // We do this manually because a complex join with filters can be tricky with Supabase basic client
   const usersWithStatus = await Promise.all(profiles.map(async (user) => {
     const { data: attendance } = await supabase
       .from('attendance')
@@ -28,7 +26,7 @@ export async function searchUsersForEvent(query: string, eventId: string) {
 
     return {
       ...user,
-      status: attendance?.status || null // 'checked-in', 'checked-out', or null
+      status: attendance?.status || null
     }
   }))
 

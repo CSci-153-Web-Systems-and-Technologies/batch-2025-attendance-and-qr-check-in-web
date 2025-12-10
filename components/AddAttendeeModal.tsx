@@ -65,7 +65,6 @@ export default function AddAttendeeModal({ events }: { events: Event[] }) {
         </Button>
       </DialogTrigger>
       
-      {/* ADDED: showCloseButton={false} to remove the default X */}
       <DialogContent showCloseButton={false} className="sm:max-w-[500px] p-0 gap-0 overflow-hidden bg-white dark:bg-[#0a0a0a] border-0 shadow-2xl rounded-2xl">
         
         {/* HEADER: Updated to Purple/Indigo Theme */}

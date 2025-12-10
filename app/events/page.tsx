@@ -10,19 +10,15 @@ import OrganizerSidebar from "@/components/OrganizerSidebar";
 export default async function EventsPage() {
   const supabase = await createClient();
 
-  // 1. Check Auth
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  // 2. Fetch Profile (Needed for the Sidebar)
   const { data: profile } = await supabase
     .from('profiles')
     .select('*')
     .eq('id', user.id)
     .single();
 
-  // 3. Fetch Events
-  // Select '*' ensures we get description & cover_image_url for the Edit modal
   const { data: events } = await supabase
     .from('events')
     .select('*')

@@ -50,7 +50,6 @@ export default function LoginPage() {
             className="hidden lg:flex w-1/2 items-center justify-center relative overflow-hidden p-12 border-r border-gray-200 dark:border-gray-800 bg-cover bg-center"
             style={{ backgroundImage: "url('/left.png')" }} 
         >
-             {/* Dark Gradient Overlay for Text Readability */}
              <div className="absolute inset-0 bg-gradient-to-b from-purple-900/40 to-black/80 backdrop-blur-[1px]"></div>
 
              <div className="relative z-10 text-center space-y-6 max-w-lg text-white">
@@ -81,7 +80,6 @@ export default function LoginPage() {
         {/* RIGHT SIDE: Login Form */}
         <div className="w-full lg:w-1/2 flex flex-col justify-center p-8 md:p-12 lg:px-24 bg-white dark:bg-[#0a0a0a] relative">
           
-          {/* Logo Area (Matched to Sidebar Style) */}
           <div className="flex justify-between items-center mb-10 lg:absolute lg:top-8 lg:right-12 lg:mb-0 w-full lg:w-auto">
             <div className="flex items-center gap-3">
                 <div className="grid grid-cols-2 gap-1 w-8 h-8 shadow-lg shadow-purple-500/20 rounded-lg p-0.5 bg-white dark:bg-black/50">
@@ -162,7 +160,6 @@ export default function LoginPage() {
               </Link>
             </div>
             
-            {/* Divider for Mobile Scroll - NOW CENTERED */}
             <div className="lg:hidden mt-12 pt-8 border-t border-gray-100 dark:border-gray-800 flex justify-center">
                 <button onClick={scrollToFeatures} className="text-xs font-bold uppercase tracking-widest text-gray-400 flex flex-col items-center gap-2">
                     Explore Features
@@ -178,7 +175,7 @@ export default function LoginPage() {
         <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16 space-y-4">
                 <h2 className="text-3xl md:text-5xl font-black tracking-tight text-gray-900 dark:text-white">
-                    Why Hunters Choose <span className="text-purple-600">VSCAN</span>
+                    Why Choose <span className="text-purple-600">VSCAN</span>
                 </h2>
                 <p className="text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
                     We've got the instincts to keep your event running smooth. No fluff, just results.
@@ -207,7 +204,6 @@ export default function LoginPage() {
 
       {/* --- ABOUT US --- */}
       <section className="py-24 px-6 bg-gray-50 dark:bg-[#0f0f0f] border-t border-gray-200 dark:border-gray-800 relative overflow-hidden">
-        {/* Background Blob */}
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-b from-purple-500/5 to-transparent rounded-full blur-3xl pointer-events-none" />
         
         <div className="max-w-4xl mx-auto text-center space-y-8 relative z-10">

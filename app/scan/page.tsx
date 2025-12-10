@@ -5,12 +5,9 @@ import ScannerInterface from "@/components/ScannerInterface";
 export default async function ScanPage() {
   const supabase = await createClient();
 
-  // 1. Check Auth
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  // 2. Fetch Events created by this organizer
-  // We need these for the "Select Event" dropdown
   const { data: events } = await supabase
     .from('events')
     .select('id, title')

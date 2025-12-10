@@ -14,10 +14,8 @@ export async function createEvent(formData: FormData) {
   const description = formData.get('description') as string
   const startTime = formData.get('start_time') as string
   
-  // 1. NEW: Extract End Time
   const endTime = formData.get('end_time') as string
 
-  // Validation: Ensure End Time is after Start Time
   if (new Date(endTime) <= new Date(startTime)) {
     return { error: "End time must be after the start time." }
   }
@@ -40,7 +38,6 @@ export async function createEvent(formData: FormData) {
     coverImageUrl = publicUrl
   }
 
-  // 2. NEW: Save 'end_time' to database
   const { error: insertError } = await supabase
     .from('events')
     .insert({
@@ -49,7 +46,7 @@ export async function createEvent(formData: FormData) {
       location,
       description,
       start_time: new Date(startTime).toISOString(),
-      end_time: new Date(endTime).toISOString(), // <--- Added here
+      end_time: new Date(endTime).toISOString(),
       cover_image_url: coverImageUrl
     })
 

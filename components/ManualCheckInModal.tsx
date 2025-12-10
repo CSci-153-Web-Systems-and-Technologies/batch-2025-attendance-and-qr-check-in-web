@@ -28,7 +28,6 @@ export default function ManualCheckInModal({ events }: { events: Event[] }) {
   const [loading, setLoading] = useState(false)
   const [results, setResults] = useState<UserResult[]>([])
 
-  // Search Handler
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!selectedEventId) {
@@ -41,7 +40,6 @@ export default function ManualCheckInModal({ events }: { events: Event[] }) {
     setLoading(false)
   }
 
-  // Toggle Check-in/Check-out
   const handleToggle = async (userId: string, currentStatus: string | null) => {
     const response = await logAttendance(userId, selectedEventId)
     
