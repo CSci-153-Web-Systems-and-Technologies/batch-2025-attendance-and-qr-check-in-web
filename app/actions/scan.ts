@@ -5,7 +5,6 @@ import { createClient } from '@/lib/server'
 export async function logAttendance(userId: string, eventId: string) {
   const supabase = await createClient()
 
-  // 1. Validate User
   const { data: userProfile, error: userError } = await supabase
     .from('profiles')
     .select('*')
@@ -16,7 +15,6 @@ export async function logAttendance(userId: string, eventId: string) {
     return { error: "Invalid QR: User not found.", success: false }
   }
 
-  // 2. Check for existing attendance record
   const { data: existingScan } = await supabase
     .from('attendance')
     .select('*')
@@ -26,7 +24,6 @@ export async function logAttendance(userId: string, eventId: string) {
 
   const now = new Date()
 
-  // --- SCENARIO A: CHECK-IN ---
   if (!existingScan) {
     const { error: insertError } = await supabase
       .from('attendance')
@@ -35,7 +32,6 @@ export async function logAttendance(userId: string, eventId: string) {
         event_id: eventId,
         status: 'checked-in',
         check_in_time: now.toISOString(),
-        check_out_time: null 
       })
 
     if (insertError) return { error: "Check-in failed.", success: false }
@@ -48,32 +44,44 @@ export async function logAttendance(userId: string, eventId: string) {
     }
   }
 
-  // --- SCENARIO B: CHECK-OUT ---
+  if (existingScan.status === 'registered') {
+    const { error: updateError } = await supabase
+      .from('attendance')
+      .update({ 
+        status: 'checked-in',
+        check_in_time: now.toISOString()
+      })
+      .eq('id', existingScan.id)
+
+    if (updateError) return { error: "Check-in failed.", success: false }
+
+    return { 
+      success: true, 
+      message: "Check-in Confirmed (Registered)", 
+      status: 'checked-in',
+      user: userProfile 
+    }
+  }
+
   if (existingScan.status === 'checked-in') {
-    
-    // NEW LOGIC: Fetch Event to check End Time
     const { data: event, error: eventError } = await supabase
       .from('events')
-      .select('end_time, title')
+      .select('end_time')
       .eq('id', eventId)
       .single()
 
-    if (eventError || !event) return { error: "Event data not found.", success: false }
-
-    const eventEndTime = new Date(event.end_time)
-
-    // Compare current time with event end time
-    if (now < eventEndTime) {
-        // Calculate time remaining for a nice error message
-        const minutesLeft = Math.ceil((eventEndTime.getTime() - now.getTime()) / (1000 * 60))
-        return { 
-            error: `Cannot check out yet! Event ends in ${minutesLeft} mins.`, 
-            success: false,
-            user: userProfile
+    if (!eventError && event) {
+        const eventEndTime = new Date(event.end_time)
+        if (now < eventEndTime) {
+            const minutesLeft = Math.ceil((eventEndTime.getTime() - now.getTime()) / (1000 * 60))
+            return { 
+                error: `Cannot check out yet! Event ends in ${minutesLeft} mins.`, 
+                success: false,
+                user: userProfile
+            }
         }
     }
 
-    // If time is valid, proceed with checkout
     const { error: updateError } = await supabase
       .from('attendance')
       .update({ 
@@ -92,7 +100,6 @@ export async function logAttendance(userId: string, eventId: string) {
     }
   }
 
-  // --- SCENARIO C: ALREADY CHECKED OUT ---
   if (existingScan.status === 'checked-out') {
     return { 
       error: "User has already checked out.", 

@@ -2,15 +2,14 @@ import { createClient } from "@/lib/server";
 import { redirect } from "next/navigation";
 import OrganizerSidebar from "@/components/OrganizerSidebar";
 import AttendeesList from "@/components/AttendeesList";
+import AddAttendeeModal from "@/components/AddAttendeeModal";
 
 export default async function AttendeesPage() {
   const supabase = await createClient();
 
-  // 1. Check Auth
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  // 2. Fetch Profile
   const { data: profile } = await supabase
     .from('profiles')
     .select('*')
@@ -19,8 +18,6 @@ export default async function AttendeesPage() {
 
   if (profile?.role !== 'organizer') redirect("/");
 
-  // 3. Fetch Events to filter query AND populate the dropdown
-  // CHANGED: Added 'title' to the select so we can use it in the UI filter
   const { data: events } = await supabase
     .from('events')
     .select('id, title') 
@@ -30,7 +27,6 @@ export default async function AttendeesPage() {
   let attendanceData: any[] = [];
   
   if (eventIds.length > 0) {
-      // 4. Fetch Attendance Data
       const { data, error } = await supabase
         .from('attendance')
         .select(`
@@ -71,10 +67,17 @@ export default async function AttendeesPage() {
             </div>
 
             {/* List Component with Events Prop */}
-            <AttendeesList 
-                initialData={attendanceData} 
-                events={events || []} 
-            />
+            <div className="flex flex-col gap-6">
+                {/* Add the Modal Here, passing the events prop */}
+                <div className="flex justify-end">
+                    <AddAttendeeModal events={events || []} />
+                </div>
+                
+                <AttendeesList 
+                    initialData={attendanceData} 
+                    events={events || []} 
+                />
+            </div>
             
         </div>
       </div>
