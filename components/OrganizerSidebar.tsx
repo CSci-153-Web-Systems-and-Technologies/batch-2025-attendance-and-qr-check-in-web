@@ -1,13 +1,13 @@
 'use client'
 
 import Link from "next/link";
-import { usePathname } from "next/navigation"; // <--- 1. Import this
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { CalendarDays, QrCode, Users, Menu } from "lucide-react";
 import SignOutButton from "./SignOutButton";
 import { useState } from "react";
-import { cn } from "@/lib/utils"; // Helper to merge classes comfortably
+import { cn } from "@/lib/utils";
 
 type UserProfile = {
   full_name: string;
@@ -17,12 +17,10 @@ type UserProfile = {
 
 export default function OrganizerSidebar({ profile }: { profile: UserProfile }) {
   const [open, setOpen] = useState(false);
-  const pathname = usePathname(); // <--- 2. Get current route
-
-  // Helper to check if a link is active
+  const pathname = usePathname(); 
+  
   const isActive = (path: string) => pathname === path;
 
-  // Reusable styling for the navigation buttons
   const getButtonClass = (active: boolean) => {
     return cn(
       "w-full justify-start h-12 gap-4 transition-all",

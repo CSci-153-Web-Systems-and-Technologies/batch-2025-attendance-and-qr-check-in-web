@@ -177,7 +177,6 @@ export default async function MyEventsPage() {
                         </div>
                     ))
                 ) : (
-                    /* EMPTY STATE - Improved */
                     <div className="col-span-full flex flex-col items-center justify-center py-24 text-center">
                         <div className="w-24 h-24 bg-gradient-to-tr from-gray-100 to-gray-50 dark:from-white/5 dark:to-white/10 rounded-full flex items-center justify-center mb-6 shadow-inner relative">
                             <div className="absolute inset-0 rounded-full border border-gray-200 dark:border-white/10"></div>

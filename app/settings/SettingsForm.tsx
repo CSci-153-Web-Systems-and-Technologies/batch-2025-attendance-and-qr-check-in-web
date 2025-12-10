@@ -77,7 +77,6 @@ export default function SettingsForm({ profile }: { profile: ProfileData }) {
                 />
             </div>
 
-            {/* Upload Button (Visible on mobile/tablet primarily) */}
             <Button 
                 type="button" 
                 variant="outline" 

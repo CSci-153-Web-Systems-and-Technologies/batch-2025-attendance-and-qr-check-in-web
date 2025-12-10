@@ -100,9 +100,7 @@ export default function EditEventModal({ event, open: controlledOpen, onOpenChan
       {/* 1. LAYOUT CONTAINER */}
       <DialogContent className="sm:max-w-[550px] max-h-[90vh] flex flex-col p-0 border-0 shadow-2xl rounded-2xl bg-white dark:bg-[#0a0a0a] overflow-hidden">
         
-        {/* 2. BOLD HEADER (Blue Theme) */}
         <div className="relative bg-gradient-to-br from-blue-600 to-cyan-600 p-8 shrink-0 text-white overflow-hidden">
-            {/* Background Decor */}
             <div className="absolute top-[-20%] right-[-10%] w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
             <div className="absolute bottom-[-20%] left-[-10%] w-40 h-40 bg-blue-400/20 rounded-full blur-2xl pointer-events-none"></div>
 

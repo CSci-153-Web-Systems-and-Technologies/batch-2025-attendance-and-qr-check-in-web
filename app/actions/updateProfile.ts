@@ -21,12 +21,11 @@ export async function updateProfile(formData: FormData) {
 
   // 3. Handle Avatar Upload (if provided)
   if (avatarFile && avatarFile.size > 0) {
-    // Validate file type/size if needed
     const fileExt = avatarFile.name.split('.').pop()
     const filePath = `${user.id}/avatar-${Date.now()}.${fileExt}`
 
     const { error: uploadError } = await supabase.storage
-      .from('avatars') // Make sure this bucket exists in Supabase!
+      .from('avatars')
       .upload(filePath, avatarFile, { upsert: true })
 
     if (uploadError) return { error: "Avatar upload failed: " + uploadError.message }
@@ -38,7 +37,6 @@ export async function updateProfile(formData: FormData) {
     updateData.avatar_url = publicUrl
   }
 
-  // 4. Update Profile Table
   const { error: updateError } = await supabase
     .from('profiles')
     .update(updateData)
@@ -46,7 +44,6 @@ export async function updateProfile(formData: FormData) {
 
   if (updateError) return { error: updateError.message }
 
-  // 5. Revalidate
-  revalidatePath('/', 'layout') // Refresh everything
+  revalidatePath('/', 'layout')
   return { success: true }
 }

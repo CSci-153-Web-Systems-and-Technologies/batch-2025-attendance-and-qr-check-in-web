@@ -44,8 +44,6 @@ export default async function Home() {
     // 1. Total unique check-ins (lifetime)
     const totalParticipants = attendanceData.length;
     
-    // 2. "Active Today" -> People currently checked in (status = 'checked-in')
-    // We filter for records where status is 'checked-in' OR 'present' (for legacy data)
     const activeNow = attendanceData.filter(a => 
         a.status === 'checked-in' || a.status === 'present'
     ).length;
@@ -94,9 +92,9 @@ export default async function Home() {
 
     const stats: DashboardStats = {
         totalParticipants,
-        checkedInToday: activeNow, // Now represents "Active Now"
+        checkedInToday: activeNow,
         totalEvents: totalEvents || 0,
-        recentCheckins: activityToday, // Represents "24h Activity"
+        recentCheckins: activityToday,
         trendData,
         eventDistribution
     };
@@ -104,6 +102,5 @@ export default async function Home() {
     return <OrganizerDashboard profile={profile} stats={stats} />;
   }
 
-  // Participant view
   return <ParticipantDashboard profile={profile} />;
 }

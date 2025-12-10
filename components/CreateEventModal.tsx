@@ -15,7 +15,6 @@ export default function CreateEventModal() {
   const [preview, setPreview] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  // Handle file selection
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
@@ -24,7 +23,6 @@ export default function CreateEventModal() {
     }
   }
 
-  // Handle drag and drop
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault()
     const file = e.dataTransfer.files?.[0]
@@ -35,7 +33,6 @@ export default function CreateEventModal() {
     }
   }
 
-  // Handle Form Submission
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
@@ -46,7 +43,7 @@ export default function CreateEventModal() {
     setLoading(false)
     if (result?.success) {
       setOpen(false)
-      setPreview(null) // Reset preview
+      setPreview(null)
     } else {
       alert(result?.error)
     }
