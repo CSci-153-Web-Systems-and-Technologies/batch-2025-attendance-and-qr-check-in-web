@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -27,6 +28,7 @@ interface EditEventModalProps {
 }
 
 export default function EditEventModal({ event, open: controlledOpen, onOpenChange: setControlledOpen }: EditEventModalProps) {
+  const router = useRouter()
   const [internalOpen, setInternalOpen] = useState(false)
   const isControlled = controlledOpen !== undefined
   
@@ -82,6 +84,7 @@ export default function EditEventModal({ event, open: controlledOpen, onOpenChan
     if (result?.success) {
       toast.success("Event updated successfully!")
       if (setOpen) setOpen(false)
+      router.refresh()
     } else {
       toast.error(result?.error || "Failed to update event")
     }
@@ -97,8 +100,8 @@ export default function EditEventModal({ event, open: controlledOpen, onOpenChan
         </DialogTrigger>
       )}
       
-      {/* 1. LAYOUT CONTAINER */}
-      <DialogContent className="sm:max-w-[550px] max-h-[90vh] flex flex-col p-0 border-0 shadow-2xl rounded-2xl bg-white dark:bg-[#0a0a0a] overflow-hidden">
+      {/* ADDED showCloseButton={false} TO REMOVE THE DUPLICATE X */}
+      <DialogContent showCloseButton={false} className="sm:max-w-[550px] max-h-[90vh] flex flex-col p-0 border-0 shadow-2xl rounded-2xl bg-white dark:bg-[#0a0a0a] overflow-hidden">
         
         <div className="relative bg-gradient-to-br from-blue-600 to-cyan-600 p-8 shrink-0 text-white overflow-hidden">
             <div className="absolute top-[-20%] right-[-10%] w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
@@ -114,7 +117,7 @@ export default function EditEventModal({ event, open: controlledOpen, onOpenChan
                 </p>
             </DialogHeader>
 
-            {/* Close Button matching the header style */}
+            {/* This Custom Close Button stays */}
             {setOpen && (
                 <button 
                     onClick={() => setOpen(false)}
@@ -125,7 +128,6 @@ export default function EditEventModal({ event, open: controlledOpen, onOpenChan
             )}
         </div>
         
-        {/* 3. SCROLLABLE FORM */}
         <div className="flex-1 overflow-y-auto bg-gray-50/50 dark:bg-black/20">
             <form id="edit-event-form" onSubmit={handleSubmit} className="p-6 space-y-6">
             
@@ -227,7 +229,6 @@ export default function EditEventModal({ event, open: controlledOpen, onOpenChan
             </form>
         </div>
 
-        {/* 4. FOOTER */}
         <div className="p-6 py-4 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-[#0a0a0a] shrink-0 flex items-center justify-end gap-3">
             <Button 
                 type="button" 

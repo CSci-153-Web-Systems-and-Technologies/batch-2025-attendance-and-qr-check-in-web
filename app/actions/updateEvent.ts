@@ -28,7 +28,7 @@ export async function updateEvent(formData: FormData) {
     end_time: new Date(endTime).toISOString(),
   }
 
-  // 4. Handle Image Update (Only if a new file is uploaded)
+  // 4. Handle Image Upload (Only if a new file is uploaded)
   if (coverFile && coverFile.size > 0) {
     const filename = `${user.id}/${Date.now()}-${coverFile.name}`
     const { error: uploadError } = await supabase.storage
@@ -45,13 +45,20 @@ export async function updateEvent(formData: FormData) {
   }
 
   // 5. Update Database
-  const { error: updateError } = await supabase
+  // We check 'data' length to ensure the row was actually updated
+  const { data, error: updateError } = await supabase
     .from('events')
     .update(updateData)
     .eq('id', eventId)
     .eq('organizer_id', user.id) // Security check: ensure they own it
+    .select()
 
   if (updateError) return { error: updateError.message }
+
+  // Check if any row was returned. If not, the update didn't happen (RLS or wrong ID).
+  if (!data || data.length === 0) {
+    return { error: "Update failed: You don't have permission to edit this event." }
+  }
 
   revalidatePath('/events')
   revalidatePath('/')
