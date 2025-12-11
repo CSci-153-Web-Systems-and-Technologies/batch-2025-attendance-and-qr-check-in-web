@@ -9,10 +9,12 @@ import SignOutButton from "./SignOutButton";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
+// Updated type
 type UserProfile = {
   full_name: string;
   email: string;
   role: string;
+  avatar_url?: string;
 }
 
 export default function OrganizerSidebar({ profile }: { profile: UserProfile }) {
@@ -47,35 +49,20 @@ export default function OrganizerSidebar({ profile }: { profile: UserProfile }) 
 
         {/* Navigation */}
         <nav className="flex-1 px-6 space-y-3 mt-4">
-          
-          {/* DASHBOARD LINK */}
           <Link href="/" className="w-full" onClick={() => setOpen(false)}>
-            <Button 
-                variant={isActive('/') ? "secondary" : "ghost"} 
-                className={getButtonClass(isActive('/'))}
-            >
+            <Button variant={isActive('/') ? "secondary" : "ghost"} className={getButtonClass(isActive('/'))}>
                 <CalendarDays className={cn("w-5 h-5", isActive('/') ? "text-purple-600 dark:text-purple-400" : "")} />
                 Dashboard
             </Button>
           </Link>
-          
-          {/* MANAGE EVENTS LINK */}
           <Link href="/events" className="w-full" onClick={() => setOpen(false)}>
-            <Button 
-                variant={isActive('/events') ? "secondary" : "ghost"} 
-                className={getButtonClass(isActive('/events'))}
-            >
+            <Button variant={isActive('/events') ? "secondary" : "ghost"} className={getButtonClass(isActive('/events'))}>
                 <QrCode className={cn("w-5 h-5", isActive('/events') ? "text-purple-600 dark:text-purple-400" : "")} />
                 Manage Events
             </Button>
           </Link>
-
-          {/* ATTENDEES LINK (Placeholder) */}
           <Link href="/attendees" className="w-full" onClick={() => setOpen(false)}>
-            <Button 
-                variant={isActive('/attendees') ? "secondary" : "ghost"} 
-                className={getButtonClass(isActive('/attendees'))}
-            >
+            <Button variant={isActive('/attendees') ? "secondary" : "ghost"} className={getButtonClass(isActive('/attendees'))}>
                 <Users className={cn("w-5 h-5", isActive('/attendees') ? "text-purple-600 dark:text-purple-400" : "")} />
                 Attendees
             </Button>
@@ -91,7 +78,6 @@ export default function OrganizerSidebar({ profile }: { profile: UserProfile }) 
 
   return (
     <>
-      {/* MOBILE TRIGGER */}
       <div className="lg:hidden fixed top-4 left-4 z-50">
         <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
@@ -105,8 +91,6 @@ export default function OrganizerSidebar({ profile }: { profile: UserProfile }) 
             </SheetContent>
         </Sheet>
       </div>
-
-      {/* DESKTOP SIDEBAR */}
       <aside className="hidden lg:flex flex-col w-72 bg-white/80 dark:bg-[#111]/80 backdrop-blur-xl border-r border-gray-200/50 dark:border-gray-800/50 h-screen fixed top-0 left-0 z-30">
         {SidebarContent}
       </aside>

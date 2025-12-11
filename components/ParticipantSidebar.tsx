@@ -9,10 +9,12 @@ import SignOutButton from "./SignOutButton";
 import { useState, useEffect } from "react"; 
 import { cn } from "@/lib/utils";
 
+// Updated type
 type UserProfile = {
   full_name: string;
   email: string;
   role: string;
+  avatar_url?: string;
 }
 
 export default function ParticipantSidebar({ profile }: { profile: UserProfile }) {
@@ -53,20 +55,13 @@ export default function ParticipantSidebar({ profile }: { profile: UserProfile }
         {/* Navigation */}
         <nav className="flex-1 px-6 space-y-3 mt-4">
           <Link href="/" className="w-full" onClick={() => setOpen(false)}>
-            <Button 
-                variant={isActive('/') ? "secondary" : "ghost"} 
-                className={getButtonClass(isActive('/'))}
-            >
+            <Button variant={isActive('/') ? "secondary" : "ghost"} className={getButtonClass(isActive('/'))}>
                 <QrCode className={cn("w-5 h-5", isActive('/') ? "text-purple-600 dark:text-purple-400" : "")} />
                 My QR Code
             </Button>
           </Link>
-          
           <Link href="/my-events" className="w-full" onClick={() => setOpen(false)}>
-            <Button 
-                variant={isActive('/my-events') ? "secondary" : "ghost"} 
-                className={getButtonClass(isActive('/my-events'))}
-            >
+            <Button variant={isActive('/my-events') ? "secondary" : "ghost"} className={getButtonClass(isActive('/my-events'))}>
                 <CalendarDays className={cn("w-5 h-5", isActive('/my-events') ? "text-purple-600 dark:text-purple-400" : "")} />
                 Events History
             </Button>
@@ -90,7 +85,6 @@ export default function ParticipantSidebar({ profile }: { profile: UserProfile }
 
   return (
     <>
-      {/* MOBILE TRIGGER (Client Side Only) */}
       <div className="lg:hidden fixed top-4 left-4 z-50">
         <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
@@ -104,8 +98,6 @@ export default function ParticipantSidebar({ profile }: { profile: UserProfile }
             </SheetContent>
         </Sheet>
       </div>
-
-      {/* DESKTOP SIDEBAR */}
       <aside className="hidden lg:flex flex-col w-72 bg-white/80 dark:bg-[#111]/80 backdrop-blur-xl border-r border-gray-200/50 dark:border-gray-800/50 h-screen fixed top-0 left-0 z-30">
         {SidebarContent}
       </aside>

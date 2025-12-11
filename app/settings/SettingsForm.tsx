@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef } from "react";
+import { useRouter } from "next/navigation"; // Added import
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,6 +18,7 @@ type ProfileData = {
 };
 
 export default function SettingsForm({ profile }: { profile: ProfileData }) {
+  const router = useRouter(); // Initialize router
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState<string | null>(profile.avatar_url || null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -38,6 +40,7 @@ export default function SettingsForm({ profile }: { profile: ProfileData }) {
     setLoading(false);
     if (result.success) {
       toast.success("Profile updated successfully");
+      router.refresh(); // REFRESH THE PAGE DATA
     } else {
       toast.error(result.error);
     }

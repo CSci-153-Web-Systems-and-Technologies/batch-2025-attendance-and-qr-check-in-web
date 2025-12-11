@@ -12,13 +12,15 @@ import {
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar" // Added AvatarImage
 import { LogOut, Settings, User, ChevronsUpDown } from "lucide-react"
 
+// Updated type to include avatar_url
 type UserProfile = {
   full_name: string;
   email: string;
   role: string;
+  avatar_url?: string;
 }
 
 export default function SignOutButton({ profile }: { profile: UserProfile }) {
@@ -42,12 +44,13 @@ export default function SignOutButton({ profile }: { profile: UserProfile }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        {/* ADD suppressHydrationWarning HERE */}
         <button 
             suppressHydrationWarning
             className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-left group outline-none"
         >
             <Avatar className="h-9 w-9 border border-gray-200 dark:border-gray-700">
+                {/* ADDED: Display the image if available */}
+                <AvatarImage src={profile.avatar_url} className="object-cover" />
                 <AvatarFallback className="bg-gradient-to-tr from-blue-500 to-cyan-400 text-white font-bold text-xs">
                     {profile.full_name.charAt(0)}
                 </AvatarFallback>
